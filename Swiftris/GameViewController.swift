@@ -50,7 +50,7 @@ class GameViewController: UIViewController, SwiftrisDelegate, UIGestureRecognize
     @IBAction func didPan(sender: UIPanGestureRecognizer) {
 		let currentPoint = sender.translation(in: self.view)
         if let originalPoint = panPointReference {
-            if abs(currentPoint.x - originalPoint.x) > (BlockSize * 0.9) {
+            if abs(currentPoint.x - originalPoint.x) > (BlockSize * 0.6) { // swipe sensitivity?
 				if sender.velocity(in: self.view).x > CGFloat(0) {
                     swiftris.moveShapeRight()
                     panPointReference = currentPoint

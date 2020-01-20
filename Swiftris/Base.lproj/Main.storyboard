@@ -81,25 +81,26 @@
                         </connections>
                     </view>
                     <connections>
-                        <outlet property="levelLabel" destination="nkl-DQ-9XT" id="y3z-8K-0gG"/>
-                        <outlet property="scoreLabel" destination="FzF-c9-eO2" id="Ok7-g7-24q"/>
+                        <outlet property="levelLabel" destination="nkl-DQ-9XT" id="1R8-8s-iYK"/>
+                        <outlet property="scoreLabel" destination="FzF-c9-eO2" id="NRC-gy-5RG"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="btX-cZ-eVz" sceneMemberID="firstResponder"/>
                 <tapGestureRecognizer id="9ge-jr-8Iz">
                     <connections>
-                        <action selector="didTapWithSender:" destination="LVB-YS-i5n" id="EgX-Mz-UHa"/>
+                        <action selector="didTapWithSender:" destination="LVB-YS-i5n" id="cr9-gk-NaN"/>
+                        <outlet property="delegate" destination="LVB-YS-i5n" id="Evg-ES-FGV"/>
                     </connections>
                 </tapGestureRecognizer>
                 <panGestureRecognizer minimumNumberOfTouches="1" id="s3C-Mx-Ytj">
                     <connections>
-                        <action selector="didPanWithSender:" destination="LVB-YS-i5n" id="ADg-kT-TcK"/>
+                        <action selector="didPanWithSender:" destination="LVB-YS-i5n" id="Hl8-0P-fCD"/>
                         <outlet property="delegate" destination="LVB-YS-i5n" id="bS6-PO-gSH"/>
                     </connections>
                 </panGestureRecognizer>
                 <swipeGestureRecognizer direction="down" id="g8e-Mj-EDG">
                     <connections>
-                        <action selector="didSwipeWithSender:" destination="LVB-YS-i5n" id="ZYt-Bx-5Ah"/>
+                        <action selector="didSwipeWithSender:" destination="LVB-YS-i5n" id="1Gg-fV-4LC"/>
                         <outlet property="delegate" destination="LVB-YS-i5n" id="mLt-II-D3a"/>
                     </connections>
                 </swipeGestureRecognizer>
