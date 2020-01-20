@@ -36,18 +36,18 @@ class Swiftris {
     
     func beginGame() {
         if (nextShape == nil) {
-            nextShape = Shape.random(PreviewColumn, startingRow: PreviewRow)
+			nextShape = Shape.random(startingColumn: PreviewColumn, startingRow: PreviewRow)
         }
-        delegate?.gameDidBegin(self)
+		delegate?.gameDidBegin(swiftris: self)
     }
     
     func newShape() -> (fallingShape:Shape?, nextShape:Shape?) {
         fallingShape = nextShape
-        nextShape = Shape.random(PreviewColumn, startingRow: PreviewRow)
-        fallingShape?.moveTo(StartingColumn, row: StartingRow)
+		nextShape = Shape.random(startingColumn: PreviewColumn, startingRow: PreviewRow)
+		fallingShape?.moveTo(column: StartingColumn, row: StartingRow)
         guard detectIllegalPlacement() == false else {
             nextShape = fallingShape
-            nextShape!.moveTo(PreviewColumn, row: PreviewRow)
+			nextShape!.moveTo(column: PreviewColumn, row: PreviewRow)
             endGame()
             return (nil, nil)
         }
@@ -77,7 +77,7 @@ class Swiftris {
             blockArray[block.column, block.row] = block
         }
         fallingShape = nil
-        delegate?.gameShapeDidLand(self)
+		delegate?.gameShapeDidLand(swiftris: self)
     }
     
     
@@ -97,7 +97,7 @@ class Swiftris {
     func endGame() {
         score = 0
         level = 1
-        delegate?.gameDidEnd(self)
+		delegate?.gameDidEnd(swiftris: self)
     }
     
     func removeAllBlocks() -> Array<Array<Block>> {
@@ -118,7 +118,7 @@ class Swiftris {
     
     func removeCompletedLines() -> (linesRemoved: Array<Array<Block>>, fallenBlocks: Array<Array<Block>>) {
         var removedLines = Array<Array<Block>>()
-        for row in (1..<NumRows).reverse() {
+        for row in (1..<NumRows).reversed() {
             var rowOfBlocks = Array<Block>()
             for column in 0..<NumColumns {
                 guard let block = blockArray[column, row] else {
@@ -141,13 +141,13 @@ class Swiftris {
         score += pointsEarned
         if score >= level * LevelThreshold {
             level += 1
-            delegate?.gameDidLevelUp(self)
+			delegate?.gameDidLevelUp(swiftris: self)
         }
         
         var fallenBlocks = Array<Array<Block>>()
         for column in 0..<NumColumns {
             var fallenBlocksArray = Array<Block>()
-            for row in (1..<removedLines[0][0].row).reverse() {
+            for row in (1..<removedLines[0][0].row).reversed() {
                 guard let block = blockArray[column, row] else {
                     continue
                 }
@@ -175,7 +175,7 @@ class Swiftris {
             shape.lowerShapeByOneRow()
         }
         shape.raiseShapeByOneRow()
-        delegate?.gameShapeDidDrop(self)
+		delegate?.gameShapeDidDrop(swiftris: self)
     }
     
     func letShapeFall() {
@@ -191,7 +191,7 @@ class Swiftris {
                 settleShape()
             }
         } else {
-            delegate?.gameShapeDidMove(self)
+			delegate?.gameShapeDidMove(swiftris: self)
             if detectTouch() {
                 settleShape()
             }
@@ -207,7 +207,7 @@ class Swiftris {
             shape.rotateCounterClockwise()
             return
         }
-        delegate?.gameShapeDidMove(self)
+		delegate?.gameShapeDidMove(swiftris: self)
     }
     
     
@@ -220,7 +220,7 @@ class Swiftris {
             shape.shiftRightByOneColumn()
             return
         }
-        delegate?.gameShapeDidMove(self)
+		delegate?.gameShapeDidMove(swiftris: self)
     }
     
     func moveShapeRight() {
@@ -232,6 +232,6 @@ class Swiftris {
             shape.shiftLeftByOneColumn()
             return
         }
-        delegate?.gameShapeDidMove(self)
+		delegate?.gameShapeDidMove(swiftris: self)
     }
 }

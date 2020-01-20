@@ -138,13 +138,13 @@ class GameScene: SKScene {
             for (blockIdx, block) in column.enumerated() {
 				let newPosition = pointForColumn(column: block.column, row: block.row)
                 let sprite = block.sprite!
-				let delay = (TimeInterval(columnIdx) * 0.05) + (NSTimeInterval(blockIdx) * 0.05)
+				let delay = (TimeInterval(columnIdx) * 0.05) + (TimeInterval(blockIdx) * 0.05)
 				let duration = TimeInterval(((sprite.position.y - newPosition.y) / BlockSize) * 0.1)
-                let moveAction = SKAction.moveTo(newPosition, duration: duration)
-                moveAction.timingMode = .EaseOut
-                sprite.runAction(
+				let moveAction = SKAction.move(to: newPosition, duration: duration)
+				moveAction.timingMode = .easeOut
+				sprite.run(
                     SKAction.sequence([
-                        SKAction.waitForDuration(delay),
+						SKAction.wait(forDuration: delay),
                         moveAction]))
                 longestDuration = max(longestDuration, duration + delay)
             }
