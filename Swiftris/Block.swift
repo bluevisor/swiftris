@@ -36,7 +36,8 @@ enum BlockColor: Int, CustomStringConvertible {
     }
     
     static func random() -> BlockColor {
-        return BlockColor(rawValue:Int(arc4random_uniform(NumberOfColors)))!
+//        return BlockColor(rawValue:Int(arc4random_uniform(NumberOfColors)))!
+		return BlockColor(rawValue: Int.random(in: 0..<Int(NumberOfColors)))!
     }
 }
 
@@ -59,9 +60,9 @@ class Block: Hashable, CustomStringConvertible {
 		hasher.combine(self.column ^ self.row)
 	}
 	
-    var hashValue: Int {
-    return self.column ^ self.row
-    }
+//    var hashValue: Int {
+//    return self.column ^ self.row
+//    }
     
     var description: String {
     return "\(color) (\(column), \(row))"

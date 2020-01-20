@@ -152,13 +152,16 @@ class GameScene: SKScene {
         
         for rowToRemove in linesToRemove {
             for block in rowToRemove {
-                let randomRadius = CGFloat(UInt(arc4random_uniform(400) + 100))
-                let goLeft = arc4random_uniform(100) % 2 == 0
+//                let randomRadius = CGFloat(UInt(arc4random_uniform(400) + 100))
+				let randomRadius = CGFloat(UInt.random(in: 100..<400))
+//                let goLeft = arc4random_uniform(100) % 2 == 0
+				let goLeft = Int.random(in: 0..<100) % 2 == 0
                 
 				var point = pointForColumn(column: block.column, row: block.row)
 				point = CGPoint(x: point.x + (goLeft ? -randomRadius : randomRadius), y: point.y)
                 
-				let randomDuration = TimeInterval(arc4random_uniform(2)) + 0.5
+//				let randomDuration = TimeInterval(arc4random_uniform(2)) + 0.5
+				let randomDuration = TimeInterval(Int.random(in: 0..<2)) + 0.5
 				var startAngle = CGFloat(Double.pi)
                 var endAngle = startAngle * 2
                 if goLeft {
