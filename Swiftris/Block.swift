@@ -55,6 +55,10 @@ class Block: Hashable, CustomStringConvertible {
     return color.description
     }
     
+	func hash(into hasher: inout Hasher) {
+		hasher.combine(self.column ^ self.row)
+	}
+	
     var hashValue: Int {
     return self.column ^ self.row
     }

@@ -24,11 +24,11 @@ class GameViewController: UIViewController, SwiftrisDelegate, UIGestureRecognize
         
         // Configure the view.
         let skView = view as! SKView
-        skView.multipleTouchEnabled = false
+		skView.isMultipleTouchEnabled = false
         
         // Create and configure the scene.
         scene = GameScene(size: skView.bounds.size)
-        scene.scaleMode = .AspectFill
+		scene.scaleMode = .aspectFill
         scene.tick = didTick
         
         swiftris = Swiftris()
@@ -39,7 +39,7 @@ class GameViewController: UIViewController, SwiftrisDelegate, UIGestureRecognize
         skView.presentScene(scene)
     }
 
-    override func prefersStatusBarHidden() -> Bool {
+	override var prefersStatusBarHidden: Bool {
         return true
     }
     
@@ -48,10 +48,10 @@ class GameViewController: UIViewController, SwiftrisDelegate, UIGestureRecognize
     }
     
     @IBAction func didPan(sender: UIPanGestureRecognizer) {
-        let currentPoint = sender.translationInView(self.view)
+		let currentPoint = sender.translation(in: self.view)
         if let originalPoint = panPointReference {
             if abs(currentPoint.x - originalPoint.x) > (BlockSize * 0.9) {
-                if sender.velocityInView(self.view).x > CGFloat(0) {
+				if sender.velocity(in: self.view).x > CGFloat(0) {
                     swiftris.moveShapeRight()
                     panPointReference = currentPoint
                 } else {
@@ -59,7 +59,7 @@ class GameViewController: UIViewController, SwiftrisDelegate, UIGestureRecognize
                     panPointReference = currentPoint
                 }
             }
-        } else if sender.state == .Began {
+		} else if sender.state == .began {
             panPointReference = currentPoint
         }
     }
@@ -68,11 +68,11 @@ class GameViewController: UIViewController, SwiftrisDelegate, UIGestureRecognize
         swiftris.dropShape()
     }
     
-    func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+	private func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
     
-    func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailByGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+	private func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailByGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         if gestureRecognizer is UISwipeGestureRecognizer {
             if otherGestureRecognizer is UIPanGestureRecognizer {
                 return true
@@ -94,9 +94,9 @@ class GameViewController: UIViewController, SwiftrisDelegate, UIGestureRecognize
         guard let fallingShape = newShapes.fallingShape else {
             return
         }
-        self.scene.addPreviewShapeToScene(newShapes.nextShape!) {}
-        self.scene.movePreviewShape(fallingShape) {
-            self.view.userInteractionEnabled = true
+		self.scene.addPreviewShapeToScene(shape: newShapes.nextShape!) {}
+		self.scene.movePreviewShape(shape: fallingShape) {
+			self.view.isUserInteractionEnabled = true
             self.scene.startTicking()
         }
     }
@@ -108,7 +108,7 @@ class GameViewController: UIViewController, SwiftrisDelegate, UIGestureRecognize
         
         // The following is false when restarting a new game
         if swiftris.nextShape != nil && swiftris.nextShape!.blocks[0].sprite == nil {
-            scene.addPreviewShapeToScene(swiftris.nextShape!) {
+			scene.addPreviewShapeToScene(shape: swiftris.nextShape!) {
                 self.nextShape()
             }
         } else {
@@ -117,10 +117,10 @@ class GameViewController: UIViewController, SwiftrisDelegate, UIGestureRecognize
     }
     
     func gameDidEnd(swiftris: Swiftris) {
-        view.userInteractionEnabled = false
+		view.isUserInteractionEnabled = false
         scene.stopTicking()
-        scene.playSound("Sounds/gameover.mp3")
-        scene.animateCollapsingLines(swiftris.removeAllBlocks(), fallenBlocks: swiftris.removeAllBlocks()) {
+		scene.playSound(sound: "gameover.mp3")
+		scene.animateCollapsingLines(linesToRemove: swiftris.removeAllBlocks(), fallenBlocks: swiftris.removeAllBlocks()) {
             swiftris.beginGame()
         }
     }
@@ -132,33 +132,33 @@ class GameViewController: UIViewController, SwiftrisDelegate, UIGestureRecognize
         } else if scene.tickLengthMillis > 50 {
             scene.tickLengthMillis -= 50
         }
-        scene.playSound("Sounds/levelup.mp3")
+		scene.playSound(sound: "levelup.mp3")
     }
     
     func gameShapeDidDrop(swiftris: Swiftris) {
         scene.stopTicking()
-        scene.redrawShape(swiftris.fallingShape!) {
+		scene.redrawShape(shape: swiftris.fallingShape!) {
             swiftris.letShapeFall()
         }
-        scene.playSound("Sounds/drop.mp3")
+		scene.playSound(sound: "drop.mp3")
     }
     
     func gameShapeDidLand(swiftris: Swiftris) {
         scene.stopTicking()
-        self.view.userInteractionEnabled = false
+		self.view.isUserInteractionEnabled = false
         let removedLines = swiftris.removeCompletedLines()
         if removedLines.linesRemoved.count > 0 {
             self.scoreLabel.text = "\(swiftris.score)"
-            scene.animateCollapsingLines(removedLines.linesRemoved, fallenBlocks:removedLines.fallenBlocks) {
-                self.gameShapeDidLand(swiftris)
+			scene.animateCollapsingLines(linesToRemove: removedLines.linesRemoved, fallenBlocks:removedLines.fallenBlocks) {
+				self.gameShapeDidLand(swiftris: swiftris)
             }
-            scene.playSound("Sounds/bomb.mp3")
+			scene.playSound(sound: "bomb.mp3")
         } else {
             nextShape()
         }
     }
     
     func gameShapeDidMove(swiftris: Swiftris) {
-        scene.redrawShape(swiftris.fallingShape!) {}
+		scene.redrawShape(shape: swiftris.fallingShape!) {}
     }
 }

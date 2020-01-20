@@ -10,7 +10,7 @@ import SpriteKit
 
 let BlockSize:CGFloat = 20.0
 
-let TickLengthLevelOne = NSTimeInterval(600)
+let TickLengthLevelOne = TimeInterval(600)
 
 class GameScene: SKScene {
     let gameLayer = SKNode()
@@ -36,7 +36,7 @@ class GameScene: SKScene {
         addChild(gameLayer)
         
         let gameBoardTexture = SKTexture(imageNamed: "gameboard")
-        let gameBoard = SKSpriteNode(texture: gameBoardTexture, size: CGSizeMake(BlockSize * CGFloat(NumColumns), BlockSize * CGFloat(NumRows)))
+		let gameBoard = SKSpriteNode(texture: gameBoardTexture, size: CGSize(width: BlockSize * CGFloat(NumColumns), height: BlockSize * CGFloat(NumRows)))
         gameBoard.anchorPoint = CGPoint(x:0, y:1.0)
         gameBoard.position = LayerPosition
         
@@ -44,7 +44,7 @@ class GameScene: SKScene {
         shapeLayer.addChild(gameBoard)
         gameLayer.addChild(shapeLayer)
         
-        runAction(SKAction.repeatActionForever(SKAction.playSoundFileNamed("theme.mp3", waitForCompletion: true)))
+		run(SKAction.repeatForever(SKAction.playSoundFileNamed("theme.mp3", waitForCompletion: true)))
     }
     
     required init(coder aDecoder: NSCoder) {
@@ -52,10 +52,10 @@ class GameScene: SKScene {
     }
     
     func playSound(sound:String) {
-        runAction(SKAction.playSoundFileNamed(sound, waitForCompletion: false))
+		run(SKAction.playSoundFileNamed(sound, waitForCompletion: false))
     }
     
-    override func update(currentTime: CFTimeInterval) {
+	override func update(_ currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
         guard let lastTick = lastTick else {
             return
@@ -78,10 +78,10 @@ class GameScene: SKScene {
     func pointForColumn(column: Int, row: Int) -> CGPoint {
         let x = LayerPosition.x + (CGFloat(column) * BlockSize) + (BlockSize / 2)
         let y = LayerPosition.y - ((CGFloat(row) * BlockSize) + (BlockSize / 2))
-        return CGPointMake(x, y)
+		return CGPoint(x: x, y: y)
     }
     
-    func addPreviewShapeToScene(shape:Shape, completion:() -> ()) {
+	func addPreviewShapeToScene(shape:Shape, completion:@escaping () -> ()) {
         for block in shape.blocks {
             var texture = textureCache[block.spriteName]
             if texture == nil {
@@ -89,57 +89,57 @@ class GameScene: SKScene {
                 textureCache[block.spriteName] = texture
             }
             let sprite = SKSpriteNode(texture: texture)
-            sprite.position = pointForColumn(block.column, row:block.row - 2)
+			sprite.position = pointForColumn(column: block.column, row:block.row - 2)
             shapeLayer.addChild(sprite)
             block.sprite = sprite
             
             // Animation
             sprite.alpha = 0
-            let moveAction = SKAction.moveTo(pointForColumn(block.column, row: block.row), duration: 0.2)
-            moveAction.timingMode = .EaseOut
-            let fadeInAction = SKAction.fadeAlphaTo(0.7, duration: 0.2)
-            fadeInAction.timingMode = .EaseOut
-            sprite.runAction(SKAction.group([moveAction, fadeInAction]))
+			let moveAction = SKAction.move(to: pointForColumn(column: block.column, row: block.row), duration: 0.2)
+			moveAction.timingMode = .easeOut
+			let fadeInAction = SKAction.fadeAlpha(to: 0.7, duration: 0.2)
+			fadeInAction.timingMode = .easeOut
+			sprite.run(SKAction.group([moveAction, fadeInAction]))
         }
-        runAction(SKAction.waitForDuration(0.2), completion: completion)
+		run(SKAction.wait(forDuration: 0.2), completion: completion)
     }
     
-    func movePreviewShape(shape:Shape, completion:() -> ()) {
+	func movePreviewShape(shape:Shape, completion:@escaping () -> ()) {
         for block in shape.blocks {
             let sprite = block.sprite!
-            let moveTo = pointForColumn(block.column, row:block.row)
-            let moveToAction = SKAction.moveTo(moveTo, duration: 0.2)
-            moveToAction.timingMode = .EaseOut
-            let fadeInAction = SKAction.fadeAlphaTo(1.0, duration: 0.2)
-            fadeInAction.timingMode = .EaseOut
-            sprite.runAction(SKAction.group([moveToAction, fadeInAction]))
+			let moveTo = pointForColumn(column: block.column, row:block.row)
+			let moveToAction = SKAction.move(to: moveTo, duration: 0.2)
+			moveToAction.timingMode = .easeOut
+			let fadeInAction = SKAction.fadeAlpha(to: 1.0, duration: 0.2)
+			fadeInAction.timingMode = .easeOut
+			sprite.run(SKAction.group([moveToAction, fadeInAction]))
         }
-        runAction(SKAction.waitForDuration(0.2), completion: completion)
+		run(SKAction.wait(forDuration: 0.2), completion: completion)
     }
     
-    func redrawShape(shape:Shape, completion:() -> ()) {
+	func redrawShape(shape:Shape, completion:@escaping () -> ()) {
         for block in shape.blocks {
             let sprite = block.sprite!
-            let moveTo = pointForColumn(block.column, row:block.row)
-            let moveToAction:SKAction = SKAction.moveTo(moveTo, duration: 0.05)
-            moveToAction.timingMode = .EaseOut
+			let moveTo = pointForColumn(column: block.column, row:block.row)
+			let moveToAction:SKAction = SKAction.move(to: moveTo, duration: 0.05)
+			moveToAction.timingMode = .easeOut
             if block == shape.blocks.last {
-                sprite.runAction(moveToAction, completion: completion)
+				sprite.run(moveToAction, completion: completion)
             } else {
-                sprite.runAction(moveToAction)
+				sprite.run(moveToAction)
             }
         }
     }
     
-    func animateCollapsingLines(linesToRemove: Array<Array<Block>>, fallenBlocks: Array<Array<Block>>, completion:() -> ()) {
-        var longestDuration: NSTimeInterval = 0
+	func animateCollapsingLines(linesToRemove: Array<Array<Block>>, fallenBlocks: Array<Array<Block>>, completion:@escaping () -> ()) {
+		var longestDuration: TimeInterval = 0
         
-        for (columnIdx, column) in fallenBlocks.enumerate() {
-            for (blockIdx, block) in column.enumerate() {
-                let newPosition = pointForColumn(block.column, row: block.row)
+        for (columnIdx, column) in fallenBlocks.enumerated() {
+            for (blockIdx, block) in column.enumerated() {
+				let newPosition = pointForColumn(column: block.column, row: block.row)
                 let sprite = block.sprite!
-                let delay = (NSTimeInterval(columnIdx) * 0.05) + (NSTimeInterval(blockIdx) * 0.05)
-                let duration = NSTimeInterval(((sprite.position.y - newPosition.y) / BlockSize) * 0.1)
+				let delay = (TimeInterval(columnIdx) * 0.05) + (NSTimeInterval(blockIdx) * 0.05)
+				let duration = TimeInterval(((sprite.position.y - newPosition.y) / BlockSize) * 0.1)
                 let moveAction = SKAction.moveTo(newPosition, duration: duration)
                 moveAction.timingMode = .EaseOut
                 sprite.runAction(
@@ -155,28 +155,28 @@ class GameScene: SKScene {
                 let randomRadius = CGFloat(UInt(arc4random_uniform(400) + 100))
                 let goLeft = arc4random_uniform(100) % 2 == 0
                 
-                var point = pointForColumn(block.column, row: block.row)
-                point = CGPointMake(point.x + (goLeft ? -randomRadius : randomRadius), point.y)
+				var point = pointForColumn(column: block.column, row: block.row)
+				point = CGPoint(x: point.x + (goLeft ? -randomRadius : randomRadius), y: point.y)
                 
-                let randomDuration = NSTimeInterval(arc4random_uniform(2)) + 0.5
-                var startAngle = CGFloat(M_PI)
+				let randomDuration = TimeInterval(arc4random_uniform(2)) + 0.5
+				var startAngle = CGFloat(Double.pi)
                 var endAngle = startAngle * 2
                 if goLeft {
                     endAngle = startAngle
                     startAngle = 0
                 }
                 let archPath = UIBezierPath(arcCenter: point, radius: randomRadius, startAngle: startAngle, endAngle: endAngle, clockwise: goLeft)
-                let archAction = SKAction.followPath(archPath.CGPath, asOffset: false, orientToPath: true, duration: randomDuration)
-                archAction.timingMode = .EaseIn
+				let archAction = SKAction.follow(archPath.cgPath, asOffset: false, orientToPath: true, duration: randomDuration)
+				archAction.timingMode = .easeIn
                 let sprite = block.sprite!
                 sprite.zPosition = 100
-                sprite.runAction(
+				sprite.run(
                     SKAction.sequence(
-                        [SKAction.group([archAction, SKAction.fadeOutWithDuration(NSTimeInterval(randomDuration))]),
+						[SKAction.group([archAction, SKAction.fadeOut(withDuration: TimeInterval(randomDuration))]),
                             SKAction.removeFromParent()]))
             }
         }
         
-        runAction(SKAction.waitForDuration(longestDuration), completion:completion)
+		run(SKAction.wait(forDuration: longestDuration), completion:completion)
     }
 }
